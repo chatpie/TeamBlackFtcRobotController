@@ -1,7 +1,8 @@
+package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous
@@ -18,7 +19,7 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode
     static final double TURN_SPEED  = 0.5;
     static final double COUNTS_PER_MOTOR_REV  = 537.7 ;   // check your motor vendor's page
     static final double DRIVE_GEAR_REDUCTION  = 1.0 ;    // 2.0 for a 12 tooth gear driving a 24 tooth gear
-    static final double WHEEL_DIAMETER_INCHES = 3.78 ;
+    static final double WHEEL_DIAMETER_INCHES = 104/25.4;
     static final double COUNTS_PER_INCH       = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
@@ -26,7 +27,7 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode
     public void runOpMode() throws InterruptedException
     {
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_motor");
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_left_motor");
+        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_motor");
         frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_motor");
         frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_motor");
 
@@ -46,11 +47,11 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode
         frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addData("Starting at",  "%7d :%7d",
+        telemetry.addData("Starting at",  "%7d :%7d :%7d :%7d",
                 backLeftDrive.getCurrentPosition(),
-                backRightDrive.getCurrentPosition());
-                frontRightDrive.getCurrentPosition();
-                frontLeftDrive.getCurrentPosition();
+                backRightDrive.getCurrentPosition(),
+                frontRightDrive.getCurrentPosition(),
+                frontLeftDrive.getCurrentPosition());
         telemetry.update();
 
         waitForStart();
@@ -98,9 +99,9 @@ public class RobotAutoDriveByEncoder_Linear extends LinearOpMode
                     (backLeftDrive.isBusy() && frontLeftDrive.isBusy() && backRightDrive.isBusy()
                     && frontRightDrive.isBusy())) {
 
-                telemetry.addData("Running to",  " %7d :%7d", newBackLeftTarget,  newFrontLeftTarget,
+                telemetry.addData("Running to",  " %7d :%7d :%7d :%7d", newBackLeftTarget,  newFrontLeftTarget,
                         newBackRightTarget, newFrontRightTarget);
-                telemetry.addData("Currently at",  " at %7d :%7d",
+                telemetry.addData("Currently at",  " at %7d :%7d :%7d :%7d",
                         backLeftDrive.getCurrentPosition(), frontLeftDrive.getCurrentPosition(), backRightDrive.getCurrentPosition(),
                         frontRightDrive.getCurrentPosition());
                 telemetry.update();
