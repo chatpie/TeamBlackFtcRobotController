@@ -25,8 +25,6 @@ package org.firstinspires.ftc.teamcode;
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -71,8 +69,9 @@ public class BlackTeleOp extends OpMode {
      * in the launch() function to only run the windmill servo when the motor is spinning fast
      * enough to make a successful throw.
      */
-    public final int LAUNCHER_TARGET_VELOCITY = 1250; //2678 RPM
-    public final int LAUNCHER_MIN_VELOCITY = 1200; //2571 RPM
+    public final int MAXIMUM_TARGET_VELOCITY = 1250;
+    public int LAUNCHER_TARGET_VELOCITY = 437; //2678 RPM
+    public int LAUNCHER_MIN_VELOCITY = 437 - 50; //2571 RPM
 
 
     // Create a variable to set to the intake.
@@ -125,7 +124,7 @@ public class BlackTeleOp extends OpMode {
          * servos work to pull elements into the intake.
          */
         rightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
-        windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        //windmillServo.setDirection(DcMotorSimple.Direction.REVERSE);
 
         /*
         This function sets up our mecanum drive object. See more in the mecanumDrive class.
@@ -136,6 +135,8 @@ public class BlackTeleOp extends OpMode {
          * Tell the driver that initialization is complete.
          */
         telemetry.addData("Status", "Initialized");
+        telemetry.addData("Left and Right Trigger controls ", "intake");
+        telemetry.addData("Right Bumper controls  ", "launcher");
     }
 
     /*
@@ -151,6 +152,7 @@ public class BlackTeleOp extends OpMode {
     @Override
     public void start() {
         drive.resetYaw();
+        drive.setZeroPowerBehaviors();
     }
 
     /*
@@ -192,8 +194,8 @@ public class BlackTeleOp extends OpMode {
          * variable before we write it to our motor and servos.
          */
 
-        intake.setPower(intakePower);
-        leftIntakeServo.setPower(intakePower);
+        intake.setPower(-intakePower);
+        leftIntakeServo.setPower(-intakePower);
         rightIntakeServo.setPower(intakePower);
 
         /*
@@ -202,6 +204,37 @@ public class BlackTeleOp extends OpMode {
         telemetry.addData("Yaw:", drive.getIMUYaw());
         telemetry.addData("Pitch:", drive.getIMUPitch());
         telemetry.addData("Roll:", drive.getIMURoll());
+
+        telemetry.addData("Launched Speed: ", LAUNCHER_TARGET_VELOCITY);
+
+        if (gamepad1.x)
+        {
+            LAUNCHER_MIN_VELOCITY -= 4;
+            LAUNCHER_TARGET_VELOCITY -= 4;
+
+            if (LAUNCHER_MIN_VELOCITY < 0)
+            {
+                LAUNCHER_MIN_VELOCITY = 0;
+                LAUNCHER_TARGET_VELOCITY = 50;
+            }
+        }
+
+        if (gamepad1.y)
+        {
+            LAUNCHER_MIN_VELOCITY += 4;
+            LAUNCHER_TARGET_VELOCITY += 4;
+
+            if (LAUNCHER_TARGET_VELOCITY > MAXIMUM_TARGET_VELOCITY)
+            {
+                LAUNCHER_MIN_VELOCITY = 1250;
+                LAUNCHER_TARGET_VELOCITY = 1200;
+            }
+        }
+        
+        if (gamepad1.b)
+        {
+            drive.resetIMUYaw();
+        }
     }
 
     /*
@@ -234,7 +267,10 @@ public class BlackTeleOp extends OpMode {
          * add some power to the intake power. This can sometimes help dislodge stuck elements from
          * inside the hopper.
          */
-        if (gamepad1.right_bumper && launcher.getVelocity() > LAUNCHER_MIN_VELOCITY) {
+
+        
+        if (gamepad1.a)
+        {
             windmillServo.setPower(1);
             intakePower += 0.5;
         } else {

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.mechanisms;
 
-
 import static com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior.BRAKE;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -23,12 +22,6 @@ public class mecanumDrive {
         frontRightMotor = hwMap.get(DcMotor.class, "motorFR");
         backRightMotor = hwMap.get(DcMotor.class, "motorBR");
 
-        frontLeftMotor.setZeroPowerBehavior(BRAKE);
-        frontRightMotor.setZeroPowerBehavior(BRAKE);
-        backLeftMotor.setZeroPowerBehavior(BRAKE);
-        backRightMotor.setZeroPowerBehavior(BRAKE);
-
-        //frontLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -97,5 +90,18 @@ public class mecanumDrive {
     public double getIMUPitch()
     {
         return imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.DEGREES);
+    }
+    
+    public void setZeroPowerBehaviors()
+    {
+        frontLeftMotor.setZeroPowerBehavior(BRAKE);
+        frontRightMotor.setZeroPowerBehavior(BRAKE);
+        backLeftMotor.setZeroPowerBehavior(BRAKE);
+        backRightMotor.setZeroPowerBehavior(BRAKE);
+    }
+    
+    public void resetIMUYaw()
+    {
+        imu.resetYaw();
     }
 }
